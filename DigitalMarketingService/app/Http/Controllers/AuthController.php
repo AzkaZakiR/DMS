@@ -5,11 +5,37 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Ui\AuthCommand;
-use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
+    public function redirectToProvider($driver)
+    {
+        return Socialite::driver($driver)->redirect();
+    }
+
+    public function handleProviderCallback($driver)
+    {
+        try {
+            $user = Socialite::driver($driver)->user();
+
+    
+            $create = User::firstOrCreate([
+                'email' => $user->email
+            ], [
+                'socialite_name' => $driver,
+                'socialite_id' => $user->id,
+                'name' => $user->getName(),
+                'email_verified_at' => now(),
+            ]);
+    
+            Auth::login($create, true);
+            return redirect()->route('dashboard');
+        } catch (\Exception $e) {
+            return redirect()->route('login');
+        }
+    }
+
     public function getLogin()
     {
         return view('login');
@@ -21,9 +47,9 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             // Authentication passed...
-            return redirect()->intended('about');
+            return redirect()->intended('/');
         }
-        return redirect('/register');
+        return redirect('/login')->with('error','Username / Password salah!');
 
       
     }
@@ -47,15 +73,15 @@ class AuthController extends Controller
             'name'=> $request->name,
             'username'=> $request->username,
             'email'=> $request->email,
-            'no_hp'=> $request->no_hp,
+            'no_handphone'=> $request->no_hp,
             'password'=> bcrypt($request->password)
         ]);
 
         //return redirect('login');
         if($request){
-            return redirect('login')->with('success', 'Register Berhasil, silakan Login ');
+            return redirect('/login')->with('success', 'Register Berhasil, silakan Login ');
          }else{
-             return redirect('login')->with('error', 'Register Gagal');
+             return redirect('register')->with('error', 'Register Gagal');
          } 
     }
 

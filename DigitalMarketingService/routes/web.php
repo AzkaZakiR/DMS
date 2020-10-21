@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ResetPassController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,28 +17,49 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::get('/', function () {
-    return view('dashboard');
-});
 
-Route::get('/register', function(){
-    return view('register');
-})->middleware('guest');
+Route::post('/sendOTP',[ResetPassController::class,'sendOTP']);
+Route::post('/confirmOTP',[ResetPassController::class,'validateOTP']);
+Route::post('/changePass',[ResetPassController::class,'changePassword']);
+
+Route::get('/register', function(){ return view('register'); })->middleware('guest');
 Route::post('/register', [AuthController::class, 'postRegister'])->name('register')->middleware('guest');
-Route::get('/login', function () {
-    return view('login');
-})->middleware('guest');
+
+Route::get('/login', function () { return view('login'); })->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'postLogin'])->name('login')->middleware('guest');
-Route::get('/logout', [AuthController::class, 'logout']);
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('redirect/{driver}',[AuthController::class,'redirectToProvider'])->name('login.provider');
+Route::get('{provider}/callback',[AuthController::class, 'handleProviderCallback']);
 
 Route::group(['middleware' => 'auth'], function(){
-   Route::get('/profile', function(){
-        return view('profile');
-    }); 
-    Route::get('/home', function(){
-        return view('home');
-    });     
-    Route::get('/about', function () {
-        return view('about');
-    });
+
+    Route::get('/', function () {
+        return view('dashboard');
+    })->name('dashboard');
+    
+    Route::get('/monitoring', function () {
+        return view('monitoring');
+    })->name('monitoring');
+    
+   
+    Route::get('/profile', [CompanyController::class, 'create'])->name('profile');
+    Route::post('/profile/store', [CompanyController::class, 'store']);
+
+    Route::get('/setting', function () {
+        return view('setting_index');
+    })->name('setting');
+    
+    // Ntar diganti jadi id masing" menu
+    Route::get('/setting/id', function () {
+        return view('setting_div');
+    })->name('settingDiv');
+
+    Route::get('/connection', function () {
+        return view('connection');
+    })->name('connection');
+
+    Route::get('/schedule', function () {
+        return view('schedule');
+    })->name('schedule');
 });
