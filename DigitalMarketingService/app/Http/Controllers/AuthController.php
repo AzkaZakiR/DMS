@@ -73,15 +73,15 @@ class AuthController extends Controller
             'name'=> $request->name,
             'username'=> $request->username,
             'email'=> $request->email,
-            'no_handphone'=> $request->no_hp,
+            'no_hp'=> $request->no_hp,
             'password'=> bcrypt($request->password)
         ]);
 
         //return redirect('login');
         if($request){
-            return redirect('/login')->with('success', 'Register Berhasil, silakan Login ');
+            return redirect('login')->with('success', 'Register Berhasil, silakan Login ');
          }else{
-             return redirect('register')->with('error', 'Register Gagal');
+             return redirect('login')->with('error', 'Register Gagal');
          } 
     }
 
