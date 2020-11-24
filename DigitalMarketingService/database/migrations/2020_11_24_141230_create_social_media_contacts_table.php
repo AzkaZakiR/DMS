@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMenuPagesTable extends Migration
+class CreateSocialMediaContactsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateMenuPagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('menu_pages', function (Blueprint $table) {
+        Schema::create('social_media_contacts', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('id_company')->unsigned();
-            $table->string('keterangan');
-            $table->string('deskripsi')->nullable();
-            $table->enum('jenis_halaman',['profile','products','services','about']);
-            $table->string('multimedia')->nullable();
+            $table->string('username')->unique();
+            $table->string('password');
+            $table->enum('social_media',['Instagram','Facebook', 'Whatsapp']);
+            $table->enum('kategori_akun',['Makanan','Clean','Corporate','Fashion','Non Profit','Residence','Fun']);
+            $table->string('website');
             $table->timestamps();
 
             $table->foreign('id_company')->references('id')->on('companies');
@@ -33,6 +34,6 @@ class CreateMenuPagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('menu_pages');
+        Schema::dropIfExists('social_media_contacts');
     }
 }

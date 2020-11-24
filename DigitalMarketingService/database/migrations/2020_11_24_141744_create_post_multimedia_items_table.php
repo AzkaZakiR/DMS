@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateItemPagesTable extends Migration
+class CreatePostMultimediaItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreateItemPagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('item_pages', function (Blueprint $table) {
+        Schema::create('post_multimedia_items', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_pages')->unsigned();
-            $table->string('judul');
-            $table->string('keterangan');
-            $table->string('multimedia');
+            $table->bigInteger('id_post')->unsigned();
+            $table->binary('value');
             $table->timestamps();
 
-            $table->foreign('id_pages')->references('id')->on('menu_pages');
+            $table->foreign('id_post')->references('id')->on('posts');
         });
     }
 
@@ -32,6 +30,6 @@ class CreateItemPagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('item_pages');
+        Schema::dropIfExists('post_multimedia_items');
     }
 }
